@@ -8,7 +8,13 @@
 function flatMapPromise(promise, asyncTransformer){
   return new Promise((resolve, reject) => {
     promise
-      .then(/* IMPLEMENT ME! */);
+      .then(response => {
+        resolve(asyncTransformer(response));
+
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 }
 
@@ -20,7 +26,9 @@ function flatMapPromise(promise, asyncTransformer){
  * @param {function} slowAsyncProcess 
  */
 function chainTwoAsyncProcesses(firstPromise, slowAsyncProcess){
-  return firstPromise.then(/* IMPLEMENT ME! */);
+  return firstPromise.then(response => {
+    return (slowAsyncProcess(response));
+  });
 }
 
 /**
@@ -32,7 +40,14 @@ function chainTwoAsyncProcesses(firstPromise, slowAsyncProcess){
  */
 function makeGetUserByIdWithOrganization(getUserById, getOrganizationById){
   return function getUserByIdWithOrganization(userId){
-    /* IMPLEMENT ME! */
+    return getUserById(userId).then(userobj => {
+      if (userobj) {
+        return getOrganizationById(userobj.organizationId).then(orgobj => {
+          userobj.organization = orgobj;
+          return userobj;
+        });
+      }
+    });
   };
 }
 
